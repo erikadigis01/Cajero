@@ -1,0 +1,90 @@
+/* ===== Estilos generales ===== */
+body {
+  background-color: #ffffff; /* Fondo blanco */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  color: #495057; /* Texto gris */
+}
+
+/* ===== Tarjetas estilo cajero ===== */
+.card,
+.atm-screen,
+.admin-panel {
+  background-color: #f8f9fa; /* Fondo claro */
+  border-radius: 1rem;
+  border: 1px solid #dee2e6; /* Borde sutil */
+  box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,.15); /* Sombra marcada */
+  padding: 2rem;
+}
+
+/* ===== Encabezados dentro de tarjetas ===== */
+.card h4,
+.atm-screen h4,
+.admin-panel h4 {
+  border-bottom: 2px solid #0d6efd; /* Azul Bootstrap */
+  padding-bottom: .5rem;
+  margin-bottom: 1rem;
+  color: #0d6efd;
+}
+
+/* ===== Botones cajero (login y usuario) ===== */
+.btn-cajero,
+.btn-atm {
+  background-color: #0d6efd;
+  border: none;
+  font-weight: bold;
+  color: #fff;
+}
+
+.btn-cajero:hover,
+.btn-atm:hover {
+  background-color: #0b5ed7;
+}
+
+/* ===== Botones del panel admin ===== */
+.btn-panel {
+  font-weight: bold;
+  border: none;
+}
+
+/* Mantener colores de Bootstrap */
+.btn-success {
+  font-weight: bold;
+}
+
+.btn-danger {
+  font-weight: bold;
+}
+
+.btn-warning {
+  font-weight: bold;
+}
+
+.btn-primary {
+  font-weight: bold;
+}
+
+/* ===== Panel administrador ===== */
+.admin-panel {
+  width: 900px;
+}
+
+/* ===== Pantalla cajero ===== */
+.atm-screen {
+  width: 600px;
+  text-align: center;
+}
+
+/* ===== Login ===== */
+.card {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ===== Texto secundario ===== */
+.text-secondary {
+  color: #6c757d !important;
+}

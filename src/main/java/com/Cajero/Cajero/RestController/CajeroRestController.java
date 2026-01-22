@@ -1,10 +1,9 @@
 package com.Cajero.Cajero.RestController;
 
+import com.Cajero.Cajero.DAO.ClienteImplementacionDAO;
 import com.Cajero.Cajero.JPA.Cajero;
 import com.Cajero.Cajero.JPA.Result;
-import com.Cajero.Cajero.Service.BancoService;
 import com.Cajero.Cajero.Service.CajeroService;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,9 @@ public class CajeroRestController {
     CajeroService cajeroService;
     
     @Autowired
-    BancoService bancoService;
+    ClienteImplementacionDAO clienteImplementacionDAO;
+    
+
     
     @PostMapping("/cajeros")
     public ResponseEntity addCajero(@RequestBody Map<String, Object> payload){
@@ -111,44 +112,37 @@ public class CajeroRestController {
         return ResponseEntity.status(result.status).body(result);
     }
     @PostMapping("/cajeros/retirar/{idCajero}")
-    public ResponseEntity retirarCajero(@PathVariable("idCajero") int idCajero,
-                                        @RequestBody Map<String, Object> datos){
-    
+    public ResponseEntity<Result> retirarCajero(@PathVariable("idCajero") int idCajero,
+                                                @RequestBody Map<String, Object> datos) {
+
         Result result = new Result();
-        
-         try {
-            
-            long id = (long) idCajero;
-            Optional<Cajero> optionalCajero = cajeroService.getById(id);
-            
-            if(optionalCajero.isPresent()) {
-                
-                Integer idUsuario = (Integer) datos.get("IdUsuario");
-                long idUser = (long) idUsuario;
-                int cantidadRetiro = (int) datos.get("CantidadRetiro");
-                float cantidad = cantidadRetiro;
-                
+
+        try {
+            long idCajeroLong = idCajero; 
+            Optional<Cajero> optionalCajero = cajeroService.getById(idCajeroLong);
+
+            if (optionalCajero.isPresent()) {
+                Long idUsuario = Long.valueOf(datos.get("IdUsuario").toString());
+                Float cantidadRetiro = Float.valueOf(datos.get("CantidadRetiro").toString());
+                result = clienteImplementacionDAO.Retirar(idCajeroLong, idUsuario, cantidadRetiro);
+                result.status = result.correct ? 201 : 400;
                 result.correct = true;
-                result.status = 201;
-                result.errorMessage = "Se retiro dinero";
+
             } else {
-                
                 result.correct = false;
                 result.status = 404;
                 result.errorMessage = "No existe ese cajero";
             }
-            
-        
+
         } catch (Exception ex) {
-            
             result.correct = false;
             result.status = 501;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
-        
         }
-        
+
         return ResponseEntity.status(result.status).body(result);
     }
+
     
 }

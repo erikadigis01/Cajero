@@ -1,0 +1,144 @@
+<!doctype html>
+ <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Administrador - Cajeros</title>
+
+    <!-- Bootstrap CSS desde CDN -->
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+      crossorigin="anonymous"
+    />
+
+   <link rel="stylesheet" href="/css/styles.css">
+
+  </head>
+  <body>
+    <div class="admin-panel">
+      <h4>Panel de Administración de Cajeros</h4>
+
+      <!-- Botón para agregar cajero -->
+      <div class="mb-3 text-end">
+        <button class="btn btn-primary btn-panel" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+          Agregar Cajero
+        </button>
+      </div>
+
+      <!-- Tabla de cajeros -->
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>ID Cajero</th>
+            <th>Ubicación</th>
+            <th>Efectivo Disponible</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ATM-001</td>
+            <td>Sucursal Centro</td>
+            <td>$50,000</td>
+            <td>
+              <button class="btn btn-success btn-sm btn-panel">Rellenar</button>
+              <button class="btn btn-danger btn-sm btn-panel" data-bs-toggle="modal" data-bs-target="#modalEliminar">Borrar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal Agregar Cajero -->
+    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar Cajero</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="idCajero" class="form-label">ID Cajero</label>
+                <input type="text" class="form-control" id="idCajero">
+              </div>
+              <div class="mb-3">
+                <label for="ubicacionCajero" class="form-label">Ubicación</label>
+                <input type="text" class="form-control" id="ubicacionCajero">
+              </div>
+              <div class="mb-3">
+                <label for="efectivoCajero" class="form-label">Efectivo Inicial</label>
+                <input type="number" class="form-control" id="efectivoCajero">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Editar Cajero -->
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Cajero</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="editIdCajero" class="form-label">ID Cajero</label>
+                <input type="text" class="form-control" id="editIdCajero" value="ATM-001">
+              </div>
+              <div class="mb-3">
+                <label for="editUbicacionCajero" class="form-label">Ubicación</label>
+                <input type="text" class="form-control" id="editUbicacionCajero" value="Sucursal Centro">
+              </div>
+              <div class="mb-3">
+                <label for="editEfectivoCajero" class="form-label">Efectivo Disponible</label>
+                <input type="number" class="form-control" id="editEfectivoCajero" value="50000">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button class="btn btn-warning">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Eliminar Cajero -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirmar Eliminación</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Está seguro de que desea eliminar este cajero? Esta acción no se puede deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button class="btn btn-danger">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS desde CDN -->
+    <script 
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+      crossorigin="anonymous">
+    </script>
+  </body>
+</html>
