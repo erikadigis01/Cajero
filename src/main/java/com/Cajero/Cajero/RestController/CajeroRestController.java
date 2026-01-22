@@ -1,14 +1,17 @@
 package com.Cajero.Cajero.RestController;
 
 import com.Cajero.Cajero.DAO.ClienteImplementacionDAO;
+import com.Cajero.Cajero.DTO.RetiroDTO;
 import com.Cajero.Cajero.JPA.Cajero;
 import com.Cajero.Cajero.JPA.Result;
 import com.Cajero.Cajero.Service.CajeroService;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +26,38 @@ public class CajeroRestController {
     @Autowired
     ClienteImplementacionDAO clienteImplementacionDAO;
     
-
+    @GetMapping("/cajeros")
+    public ResponseEntity getAll(){
+        Result result = new Result();
+            
+        try {
+            
+            List<Cajero> cajeros = cajeroService.getAll();
+            if(!cajeros.isEmpty()) {
+                
+                result.correct = true;
+                result.errorMessage = "Se encontraron cajeros";
+                result.status = 200;
+                result.objects = cajeros;
+            
+            } else {
+                
+                result.correct = false;
+                result.errorMessage = "No hay cajeros";
+                result.status = 400;
+            
+            }
+        
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+            result.status = 500;
+        }
+        
+        return ResponseEntity.status(result.status).body(result);
+    
+    }
     
     @PostMapping("/cajeros")
     public ResponseEntity addCajero(@RequestBody Map<String, Object> payload){
@@ -111,21 +145,20 @@ public class CajeroRestController {
         
         return ResponseEntity.status(result.status).body(result);
     }
-    @PostMapping("/cajeros/retirar/{idCajero}")
-    public ResponseEntity<Result> retirarCajero(@PathVariable("idCajero") int idCajero,
-                                                @RequestBody Map<String, Object> datos) {
+    @PostMapping("/cajeros/retirar")
+    public ResponseEntity<Result> retirarCajero(@RequestBody RetiroDTO retiro) {
 
         Result result = new Result();
 
         try {
-            long idCajeroLong = idCajero; 
+            long idCajeroLong = retiro.getIdCajero(); 
             Optional<Cajero> optionalCajero = cajeroService.getById(idCajeroLong);
 
             if (optionalCajero.isPresent()) {
-                Long idUsuario = Long.valueOf(datos.get("IdUsuario").toString());
-                Float cantidadRetiro = Float.valueOf(datos.get("CantidadRetiro").toString());
+                Long idUsuario = retiro.getIdUser();
+                Float cantidadRetiro = (float) retiro.getCantidadRetiro();
                 result = clienteImplementacionDAO.Retirar(idCajeroLong, idUsuario, cantidadRetiro);
-                result.status = result.correct ? 201 : 400;
+                result.status = result.correct ? 200 : 400;
                 result.correct = true;
 
             } else {

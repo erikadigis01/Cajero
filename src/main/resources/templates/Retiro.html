@@ -1,5 +1,5 @@
 <!doctype html>
-<html <html xmlns:th="http://www.thymeleaf.org">
+ <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,55 +22,75 @@
 
       <!-- Datos del usuario -->
       <div class="text-start mb-4">
-        <p><strong>Nombre:</strong> Juan Pérez</p>
-        <p><strong>Cuenta:</strong> 1234567890</p>
-        <p><strong>Saldo disponible:</strong> $5,000.00</p>
+        <p><strong>Nombre:</strong> <span th:text="${usuario.Nombre}"></span></p>
+        <p><strong>Cuenta:</strong> <span th:text="${usuario.Cuenta}"></span></p>
+        <p><strong>Saldo Disponible:$</strong> <span th:text="${usuario.SaldoDisponible}"></span></p>
       </div>
 
-      <!-- Selección de montos -->
-      <div class="row g-3 mb-4">
-        <div class="col-6 d-grid">
-          <button class="btn btn-atm py-3">$200</button>
+      <form th:action="@{/usuario/retirar/{id}(id=${usuario.idUsuario})}" th:object="${retiro}" method="post">
+         
+          <!--Selección de montos--> 
+        <div class="row g-3 mb-4"> 
+            <div class="col-6 d-grid"> 
+                <button class="btn btn-atm py-3" th:disabled="${usuario.SaldoDisponible < 200.0}" type="button" onclick="btnValor(200)">$200</button> 
+            </div> 
+            <div class="col-6 d-grid"> 
+                <button class="btn btn-atm py-3" th:disabled="${usuario.SaldoDisponible < 500.0}" type="button" onclick="btnValor(500)">$500</button>
+            </div> 
+            <div class="col-6 d-grid"> 
+                <button class="btn btn-atm py-3" th:disabled="${usuario.SaldoDisponible < 1000.0}" type="button" onclick="btnValor(1000)">$1000
+                </button> 
+            </div> 
         </div>
-        <div class="col-6 d-grid">
-          <button class="btn btn-atm py-3">$500</button>
-        </div>
-        <div class="col-6 d-grid">
-          <button class="btn btn-atm py-3">$1000</button>
-        </div>
-        <div class="col-6 d-grid">
-          <button class="btn btn-atm py-3">$2000</button>
-        </div>
-      </div>
 
-      <!-- Campo para otro monto -->
-      <div class="form-floating mb-3">
-        <input 
-          type="number" 
-          class="form-control" 
-          id="otroMonto" 
-          placeholder="Ingrese otro monto"
+        <!-- Campo para cantidad -->
+        <div class="form-floating mb-3">
+          <input
+            min="1"
+            th:attr="max=${usuario.SaldoDisponible}" 
+            type="number"
+            step="0.01"
+            class="form-control"
+            id="otroMonto"
+            placeholder="0.00"
+            th:field="*{cantidadRetiro}"
         />
-        <label for="otroMonto">Otro monto</label>
+          <label for="otroMonto">Otro monto</label>
+        </div>
+        
+        <div class="form-floating mb-3 text-start">
+            <p><strong>Cajero</strong>
+                <select class="form-select" id="idCajero" name="idCajero" th:field="*{idCajero}" required>
+                    <option value="0" selected>Seleciona un Cajero</option>
+                    <option th:each="cajero, iterStat : ${cajeros}"
+                            th:value="${cajero.idCajero}"
+                            th:text="|Cajero: ${iterStat.index + 1}|"
+                            th:disabled="${usuario.SaldoDisponible > cajero.cantidadDisponible}">
+                    </option>
+                </select>
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-success py-3 fw-bold" type="submit">
+            Confirmar Retiro
+          </button>
+        </div>
+        <div class="mt-4">
+          <p class="small text-secondary">Seleccione un monto o ingrese otro y confirme</p>
+        </div>
       </div>
-
-      <!-- Botón de confirmación -->
-      <div class="d-grid">
-        <button class="btn btn-success py-3 fw-bold" type="button">
-          Confirmar Retiro
-        </button>
-      </div>
-
-      <div class="mt-4">
-        <p class="small text-secondary">Seleccione un monto o ingrese otro y confirme</p>
-      </div>
-    </div>
-
+    </form>
     <!-- Bootstrap JS desde CDN -->
     <script 
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
       crossorigin="anonymous">
+    </script>
+    <!--Jquery-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script> 
+        function btnValor(valor) { 
+            document.getElementById("otroMonto").value = valor;
+        } 
     </script>
   </body>
 </html>

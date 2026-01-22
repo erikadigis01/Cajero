@@ -21,15 +21,15 @@
 
       <!-- Datos del usuario -->
       <div class="atm-data text-start mb-4">
-        <p><strong>Nombre:</strong> Juan Pérez</p>
-        <p><strong>Cuenta:</strong> 1234567890</p>
+        <p><strong>Nombre:</strong> <span th:text="${usuario.Nombre}"></span></p>
+        <p><strong>Cuenta:</strong> <span th:text="${usuario.Cuenta}"></span></p>
         <p><strong>NIP:</strong> ****</p>
       </div>
 
       <!-- Opciones estilo cajero -->
       <div class="row g-3">
         <div class="col-6 d-grid">
-          <button class="btn btn-atm py-3">Retirar Dinero</button>
+          <a class="btn btn-atm py-3" th:href="@{/usuario/retirar/{idUsuario}(idUsuario=${usuario.idUsuario})}">Retirar Dinero</a>
         </div>
         <div class="col-6 d-grid">
           <button class="btn btn-atm py-3">Consultar Saldo</button>
