@@ -57,7 +57,7 @@
                 <td><span th:text="${cajero.banco.Nombre}"></span></td>
                 <td class="text-center">
                   <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalRellenar" th:onclick="'mandarIdCajero(' + ${cajero.idCajero} + ')'">Rellenar</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">Borrar</button>
+                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar" th:onclick="'mandarIdCajeroEliminar(' + ${cajero.idCajero} + ')'">Borrar</button>
                 </td>
               </tr>
             </tbody>
@@ -75,7 +75,8 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <form>
+            <form th:action="@{/admin/agregarCajero}" th:object="${cajero}" method="post">
+                <input type="number" class="form-control d-none" id="idUsuario" name="idUsuario" th:value="${usuario.idUsuario}">
               <div class="mb-3">
                 <label for="idCajero" class="form-label">ID Cajero</label>
                 <input type="text" class="form-control" id="idCajero">
@@ -88,12 +89,22 @@
                 <label for="efectivoCajero" class="form-label">Efectivo Inicial</label>
                 <input type="number" class="form-control" id="efectivoCajero">
               </div>
+                <div class="mb-3">
+                    <label class="form-label">Banco</label>
+                    <select class="form-select" id="idBanco" name="idBanco" th:field="*{banco.idBanco}" required>
+                    <option value="0" selected>Seleciona un Banco</option>
+                    <option th:each="banco, iterStat : ${bancos}"
+                            th:value="${banco.idBanco}"
+                            th:text="|Banco: ${banco.Nombre}|">
+                    </option>
+                </select>
+                </div>
+            </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button class="btn btn-primary">Guardar</button>
-          </div>
         </div>
       </div>
     </div>
@@ -120,12 +131,12 @@
                 <label for="editEfectivoCajero" class="form-label">Efectivo Disponible</label>
                 <input type="number" class="form-control" id="editEfectivoCajero" value="50000">
               </div>
-            </form>
           </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button class="btn btn-warning">Guardar Cambios</button>
-          </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button class="btn btn-warning" type="submit">Guardar Cambios</button>
+                </div>
+           </form>
         </div>
       </div>
     </div>
@@ -134,18 +145,22 @@
     <div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title">Confirmar Eliminación</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p>¿Está seguro de que desea eliminar este cajero? Esta acción no se puede deshacer.</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button class="btn btn-danger">Eliminar</button>
-          </div>
-        </div>
+            <form th:action="@{/admin/deleteCajero}" method="post">
+                <input type="number" class="form-control d-none" id="idUsuario" name="idUsuario" th:value="${usuario.idUsuario}">
+                <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Confirmar Eliminación</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <p>¿Está seguro de que desea eliminar este cajero? Esta acción no se puede deshacer.</p>
+                </div>
+                <input id="inputIdCajeroEliminar" class="d-none" name="inputIdCajeroEliminar" type="number">
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button class="btn btn-danger">Eliminar</button>
+                </div>
+              </div>
+            </form>
       </div>
     </div>
     <!-- Modal Rellenar Cajero -->
@@ -181,6 +196,11 @@
         function mandarIdCajero(idCajero) {
             
             document.getElementById("inputIdCajero").value = idCajero;
+        }
+        function mandarIdCajeroEliminar(idCajero) {
+            
+            document.getElementById("inputIdCajeroEliminar").value = idCajero;
+            alert(idCajero);
         }
     </script>
   </body>

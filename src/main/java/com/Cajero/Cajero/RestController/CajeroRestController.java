@@ -2,11 +2,12 @@ package com.Cajero.Cajero.RestController;
 
 import com.Cajero.Cajero.DAO.ClienteImplementacionDAO;
 import com.Cajero.Cajero.DTO.RetiroDTO;
+import com.Cajero.Cajero.JPA.Banco;
 import com.Cajero.Cajero.JPA.Cajero;
 import com.Cajero.Cajero.JPA.Result;
+import com.Cajero.Cajero.Service.BancoService;
 import com.Cajero.Cajero.Service.CajeroService;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,12 @@ public class CajeroRestController {
     
     @Autowired
     CajeroService cajeroService;
+    
+    @Autowired
+    BancoService bancoService;
+    
+    @Autowired
+    ClienteImplementacionDAO cajeroDAO;
     
     @Autowired
     ClienteImplementacionDAO clienteImplementacionDAO;
@@ -60,15 +67,14 @@ public class CajeroRestController {
     }
     
     @PostMapping("/cajeros")
-    public ResponseEntity addCajero(@RequestBody Map<String, Object> payload){
+    public ResponseEntity addCajero(@RequestBody Cajero cajero){
     
         Result result = new Result();
         
         try {
             
-            Integer id = (Integer) payload.get("IdBanco");
-            long idBanco = id;
-            cajeroService.addCajero(idBanco);
+            
+            result = cajeroDAO.addCajero(cajero.banco.getIdBanco());
             result.correct = true;
             result.status = 201;
             
@@ -80,8 +86,7 @@ public class CajeroRestController {
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         
-        }
-        
+        }        
         return ResponseEntity.status(result.status).body(result);
     }
     
@@ -176,6 +181,29 @@ public class CajeroRestController {
 
         return ResponseEntity.status(result.status).body(result);
     }
-
+    
+    @GetMapping("/bancos")
+    public ResponseEntity getAllCajeros(){
+    
+        Result result = new Result();
+        
+        try{
+            
+            List<Banco> bancos = bancoService.getAll();
+            result.correct = true;
+            result.status = 200;
+            result.objects = bancos;
+        
+        } catch (Exception ex) {
+        
+            result.correct = false;
+            result.status = 501;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        
+        }
+        
+        return ResponseEntity.status(result.status).body(result);
+    }
     
 }

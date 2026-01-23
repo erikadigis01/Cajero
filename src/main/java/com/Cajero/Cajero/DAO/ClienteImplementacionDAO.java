@@ -53,5 +53,24 @@ public class ClienteImplementacionDAO implements CajeroInterfaceDAO{
             });
     }
 
+    @Override
+    public Result addCajero(Long IdBanco) {
+        return jdbcTemplate.execute("{CALL AddCajero(?)}", 
+        (CallableStatementCallback<Result>) callableStatement -> {
+
+            Result resultSP = new Result();
+            try {
+                callableStatement.setLong(1, IdBanco);
+                callableStatement.execute();
+                resultSP.correct = true;
+            } catch (Exception ex) {
+                resultSP.correct = false;
+                resultSP.errorMessage = ex.getLocalizedMessage();
+                resultSP.ex = ex;
+            }
+            return resultSP;
+        });
+    }
+
 
 }

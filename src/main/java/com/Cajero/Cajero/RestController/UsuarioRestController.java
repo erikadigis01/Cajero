@@ -5,7 +5,6 @@ import com.Cajero.Cajero.JPA.Usuario;
 import com.Cajero.Cajero.Service.UsuarioService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
