@@ -1,5 +1,5 @@
 <!doctype html>
- <html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,52 +12,67 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
       crossorigin="anonymous"
     />
-
-   <link rel="stylesheet" href="/css/styles.css">
-
   </head>
-  <body>
-    <div class="admin-panel">
-      <h4>Panel de Administración de Cajeros</h4>
+  <body class="bg-light">
 
-      <!-- Botón para agregar cajero -->
-      <div class="mb-3 text-end">
-        <button class="btn btn-primary btn-panel" data-bs-toggle="modal" data-bs-target="#modalAgregar">
-          Agregar Cajero
-        </button>
+    <!-- Encabezado -->
+    <div class="container my-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+          <h3 class="text-success mb-2">Hola</h3>
+          <span class="fw-bold" th:text="${usuario.Nombre}"></span>
+        </div>
       </div>
-
-      <!-- Tabla de cajeros -->
-      <table class="table table-striped table-hover align-middle">
-        <thead class="table-primary">
-          <tr>
-            <th>ID Cajero</th>
-            <th>Ubicación</th>
-            <th>Efectivo Disponible</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>ATM-001</td>
-            <td>Sucursal Centro</td>
-            <td>$50,000</td>
-            <td>
-              <button class="btn btn-success btn-sm btn-panel">Rellenar</button>
-              <button class="btn btn-danger btn-sm btn-panel" data-bs-toggle="modal" data-bs-target="#modalEliminar">Borrar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      
+        <div class="alert alert-success" role="alert" th:if="${success != null}">
+            <span th:text="${success}"></span>
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${error != null}">
+            <span th:text="${error}"></span>
+        </div>
+      <!-- Panel principal -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Panel de Administración de Cajeros</h4>
+          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+            + Agregar Cajero
+          </button>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th>ID Cajero</th>
+                <th>Ubicación</th>
+                <th>Efectivo Disponible</th>
+                <th>Banco</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="cajero, iterStat : ${cajeros}">
+                  <td>ATM-<span th:text="${iterStat.index + 1}"></span></td>
+                <td>Sucursal Centro</td>
+                <td><span th:text="${cajero.CantidadDisponible}"></span></td>
+                <td><span th:text="${cajero.banco.Nombre}"></span></td>
+                <td class="text-center">
+                  <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalRellenar" th:onclick="'mandarIdCajero(' + ${cajero.idCajero} + ')'">Rellenar</button>
+                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalEliminar">Borrar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Agregar Cajero -->
     <div class="modal fade" id="modalAgregar" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header bg-primary text-white">
             <h5 class="modal-title">Agregar Cajero</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <form>
@@ -87,7 +102,7 @@
     <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header bg-warning">
             <h5 class="modal-title">Editar Cajero</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
@@ -133,12 +148,40 @@
         </div>
       </div>
     </div>
+    <!-- Modal Rellenar Cajero -->
+    <div class="modal fade" id="modalRellenar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+              <h5 class="modal-title">Confirma Rellenar Cajero</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Está seguro de que desea rellenar el cajero? Esta acción no se puede deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <form th:action="@{/admin/rellenarCajero}" method="post">
+                <input id="inputIdCajero" class="d-none" name="inputIdCajero" type="number">
+                <input id="inputIdAdmin" class="d-none" name="inputIdAdmin" th:value="${usuario.idUsuario}" type="number">
+                <button class="btn btn-primary" type="submit">Rellenar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Bootstrap JS desde CDN -->
     <script 
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
       crossorigin="anonymous">
+    </script>
+    <script th:inline="javascript">
+        function mandarIdCajero(idCajero) {
+            
+            document.getElementById("inputIdCajero").value = idCajero;
+        }
     </script>
   </body>
 </html>
