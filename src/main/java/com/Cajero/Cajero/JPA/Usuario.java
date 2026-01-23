@@ -23,7 +23,7 @@ public class Usuario {
     private String Nombre;
     
     @Column(name = "cuenta")
-    private String Cuenta;
+    private String cuenta;
     
     @Column(name = "nip")
     private int Nip;
@@ -38,10 +38,10 @@ public class Usuario {
     public Usuario(){}
     
     public Usuario(Long idUsuario, String Nombre, 
-                  String Cuenta,int Nip, float SaldoDisponible){
+                  String cuenta,int Nip, float SaldoDisponible){
         this.idUsuario = idUsuario;
         this.Nombre = Nombre;
-        this.Cuenta = Cuenta;
+        this.cuenta = cuenta;
         this.Nip = Nip;
         this.SaldoDisponible = SaldoDisponible;
     }
@@ -52,8 +52,8 @@ public class Usuario {
     public void setNombre(String Nombre){this.Nombre = Nombre;}
     public String getNombre(){return Nombre;}
     
-    public void setCuenta(String Cuenta){this.Cuenta = Cuenta;}
-    public String getCuenta(){return Cuenta;}
+    public void setCuenta(String Cuenta){this.cuenta = Cuenta;}
+    public String getCuenta(){return cuenta;}
     
     public void setNip(int Nip){this.Nip = Nip;}
     public int getNip(){return Nip;}
