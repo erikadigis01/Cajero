@@ -1,37 +1,37 @@
 package com.Cajero.Cajero.Security;
 
-
-import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity
-public class WebSecurityConfig {
-    
+@EnableWebSecurity(debug = true)
+@EnableMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
+
     @Autowired
-    private UserDetails userDetails;
+    private UserService usuarioService;
 
     @Autowired
     private JwtAuthenticationFilter jwtFilter;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider((UserDetailsService) userDetails);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usuarioService);
         provider.setPasswordEncoder(passwordEncoder());   // encoder BCrypt
         return provider;
     }
@@ -47,10 +47,13 @@ public class WebSecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**","/login/**", "/logout/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/usuario/**").hasRole("USER")   
+                .requestMatchers("/cajeros/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/bancos/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/usuario/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
@@ -58,7 +61,8 @@ public class WebSecurityConfig {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 })
             )
-            .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -67,5 +71,5 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
-
+    
 }

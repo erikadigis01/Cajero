@@ -5,6 +5,8 @@ import com.Cajero.Cajero.DTO.RetiroDTO;
 import com.Cajero.Cajero.JPA.Cajero;
 import com.Cajero.Cajero.JPA.Result;
 import com.Cajero.Cajero.JPA.Usuario;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/usuario")
@@ -27,11 +30,30 @@ public class UserController {
     
     public String url = "http://localhost:8080/";
     
+     private String getTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("JWT_TOKEN".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
     @GetMapping("/{idUsuario}")
     public String perfilUsuario(@PathVariable("idUsuario") int idUsuario,
-                                Model model){
+                                Model model, RedirectAttributes redirectAttributes,
+                                HttpServletRequest request){
+        
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
         
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Result<Usuario>> response =
@@ -54,8 +76,19 @@ public class UserController {
     
     @GetMapping("/retirar/{idUsuario}")
     public String retirar(@PathVariable("idUsuario") int idUsuario,
-                                Model model){
+                        Model model,
+                        RedirectAttributes redirectAttributes,
+                        HttpServletRequest request){
+        
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
+        
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        
         HttpEntity<?> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         
@@ -98,11 +131,20 @@ public class UserController {
     @PostMapping("/retirar/{idUser}")
     public String retirarCantidad(@PathVariable("idUser") int idUser,
                                   @ModelAttribute("retiro") RetiroDTO retiro,
-                                  Model model) {
+                                  Model model,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpServletRequest request) {
         long iduser = idUser;
         retiro.setIdUser(iduser);
 //        -----RETIRO-----
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
+        
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(retiro, headers);
         RestTemplate restTemplate = new RestTemplate();
         

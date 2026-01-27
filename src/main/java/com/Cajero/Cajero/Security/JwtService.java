@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
-
+    
     @Value("${jwt.secret}")
     private String SECRETO;
 
@@ -57,7 +58,7 @@ public class JwtService {
     }
 
     // ✅ Incluir roles en el token
-    public String creatToken(org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public String creatToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -75,7 +76,7 @@ public class JwtService {
         return List.of();
     }
 
-    public boolean validarToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
+    public boolean validarToken(String token, UserDetails userDetails) {
         final String username = extraerUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpiration(token));
     }

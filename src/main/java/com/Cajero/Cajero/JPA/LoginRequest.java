@@ -2,18 +2,18 @@ package com.Cajero.Cajero.JPA;
 
 
 public class LoginRequest {
-    private String email;
-    private int nip;
+    private String cuenta;
+    private String nip;
     
     public LoginRequest(){}
     
-    public LoginRequest(String email, int nip){
-        this.email = email;
+    public LoginRequest(String cuenta, String nip){
+        this.cuenta = cuenta;
         this.nip = nip;
     }
     
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public int getNip() { return nip; }
-    public void setNip(int nip) { this.nip = nip; }
+    public String getCuenta() { return cuenta; }
+    public void setCuenta(String cuenta ) { this.cuenta = cuenta; }
+    public String getNip() { return nip; }
+    public void setNip(String nip) { this.nip = nip; }
 }

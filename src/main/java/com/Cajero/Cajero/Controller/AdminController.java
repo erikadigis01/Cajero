@@ -4,6 +4,8 @@ import com.Cajero.Cajero.JPA.Banco;
 import com.Cajero.Cajero.JPA.Cajero;
 import com.Cajero.Cajero.JPA.Result;
 import com.Cajero.Cajero.JPA.Usuario;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
@@ -27,11 +29,30 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminController {
     public String url = "http://localhost:8080/";
     
+    private String getTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("JWT_TOKEN".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
     @GetMapping("/{idUsuario}")
     public String perfilAdmin(@PathVariable("idUsuario") int idUsuario,
-                                Model model){
+                                Model model, HttpServletRequest request,
+                                RedirectAttributes redirectAttributes){
+        
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
         
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
         HttpEntity<?> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         
@@ -81,9 +102,17 @@ public class AdminController {
     @PostMapping("/rellenarCajero")
     public String rellenarCajero(@RequestParam("inputIdCajero") int IdCajero,
                                  @RequestParam("inputIdAdmin") int IdUser,
-                                 Model model, RedirectAttributes redirect){
+                                 Model model, RedirectAttributes redirect,
+                                  HttpServletRequest request){
         
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirect.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        
         HttpEntity<?> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         
@@ -109,9 +138,18 @@ public class AdminController {
     @PostMapping("/agregarCajero")
     public String addCajero(@ModelAttribute("cajero") Cajero cajero,
                             @RequestParam("idUsuario") int IdUser,
-                            RedirectAttributes redirect){
+                            RedirectAttributes redirect, 
+                            HttpServletRequest request){
         
+        
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirect.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        
         HttpEntity<?> entity = new HttpEntity<>(cajero,headers);
         RestTemplate restTemplate = new RestTemplate();
         
@@ -137,9 +175,17 @@ public class AdminController {
     @PostMapping("/deleteCajero")
     public String deleteCajero(@RequestParam("inputIdCajeroEliminar") int idCajero,
                                 @RequestParam("idUsuario") int IdUser,
-                                RedirectAttributes redirect) {
+                                RedirectAttributes redirect,
+                                HttpServletRequest request) {
         
+        String token = getTokenFromCookie(request);
+        if (token == null) {
+            redirect.addAttribute("status", "Su sesión ha caducado");
+            return "redirect:/login";
+        }
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        
         HttpEntity<?> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
         

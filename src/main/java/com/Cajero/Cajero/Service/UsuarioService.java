@@ -37,6 +37,11 @@ public class UsuarioService {
     }
     
     @Transactional
+    public Optional<Usuario> getByCuenta(String cuenta) {
+        return  usuarioRepository.findByCuenta(cuenta);
+    }
+    
+    @Transactional
     public void delete(Long IdUsuario){
         usuarioRepository.deleteById(IdUsuario);
     }
