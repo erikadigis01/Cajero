@@ -47,10 +47,7 @@ public class UserController {
                                 HttpServletRequest request){
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
@@ -81,10 +78,7 @@ public class UserController {
                         HttpServletRequest request){
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
@@ -138,10 +132,7 @@ public class UserController {
         retiro.setIdUser(iduser);
 //        -----RETIRO-----
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);

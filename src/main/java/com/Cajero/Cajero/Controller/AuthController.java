@@ -5,6 +5,7 @@ import com.Cajero.Cajero.JPA.Usuario;
 import com.Cajero.Cajero.Security.JwtService;
 import com.Cajero.Cajero.Service.UsuarioService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +73,7 @@ public class AuthController {
                 Cookie cookie = new Cookie("JWT_TOKEN", token);
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
+                cookie.setSecure(true);
                 cookie.setMaxAge(60 * 60);
                 response.addCookie(cookie);
 
@@ -94,17 +97,6 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("error", "Correo o contraseña incorrectos");
             return "redirect:/login";
         }
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("JWT_TOKEN", null);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // expira inmediatamente
-        response.addCookie(cookie);
-
-        return "redirect:/login?logout=true";
     }
     
 }

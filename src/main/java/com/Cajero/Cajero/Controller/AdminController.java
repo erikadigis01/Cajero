@@ -46,10 +46,6 @@ public class AdminController {
                                 RedirectAttributes redirectAttributes){
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirectAttributes.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
         
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
@@ -106,10 +102,7 @@ public class AdminController {
                                   HttpServletRequest request){
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirect.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         
@@ -143,10 +136,7 @@ public class AdminController {
         
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirect.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         
@@ -179,10 +169,7 @@ public class AdminController {
                                 HttpServletRequest request) {
         
         String token = getTokenFromCookie(request);
-        if (token == null) {
-            redirect.addAttribute("status", "Su sesión ha caducado");
-            return "redirect:/login";
-        }
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         

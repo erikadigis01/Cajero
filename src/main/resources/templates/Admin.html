@@ -17,12 +17,20 @@
 
     <!-- Encabezado -->
     <div class="container my-4">
-      <div class="card shadow-sm mb-4">
-        <div class="card-body text-center">
-          <h3 class="text-success mb-2">Hola</h3>
-          <span class="fw-bold" th:text="${usuario.Nombre}"></span>
+      <div class="card shadow-sm mb-4 bg-light border-0">
+        <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="text-success mb-0">Hola</h3>
+                    <span class="fw-bold fs-5" th:text="${usuario.Nombre}">Usuario</span>
+                </div>
+                <a class="btn btn-danger btn-sm" th:href="@{/logout}">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </a>
+            </div>
         </div>
-      </div>
+    </div>
+
       
         <div class="alert alert-success" role="alert" th:if="${success != null}">
             <span th:text="${success}"></span>
